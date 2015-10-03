@@ -79,11 +79,28 @@ public class KMeans extends ClusteringAlgorithm
 		*/
 
 		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
-		///Go through all the points
+		///Go through all the points. i is current person.
+		for(int i = 0; i < dim; i++){
+			int closestCenter = -1;
+			///Calculate distances to each initial point of each cluster. There are k clusters. j is current cluster.
+			for(int j = 0; j < k; j++){
+				int distance = -1;
+				///Calculate distance ///TODO figure out how to
+				/// if (newDistance < distance){
+				///		closestCenter = j; }
 
-		///Calculate distances to each initial point of each cluster.
 
-		///Add point to correct cluster
+			}
+			///In case something went wrong.
+			if (closestCenter == -1){
+				System.out.println("\nWARNING! Something went wrong with assigning to clusters: closestCenter == -1");
+			}
+
+			///Add point to correct cluster
+			clusters[closestCenter].currentMembers.add(i);
+		}
+
+
 
 
 		// Step 3: recalculate cluster centers
