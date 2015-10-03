@@ -59,14 +59,25 @@ public class KMeans extends ClusteringAlgorithm
 	 	//implement k-means algorithm here:
 		// Step 1: Select an initial random partioning with k clusters
 
-		///Dim is amount of people, go through all the people
+		///Select k initial points to become center of the cluster.
+		for(int i = 0; i < k; i++ ){
+			///Get random number between 0 and dim.
+			Random r = new Random();
+			int R = r.nextInt(dim-0);
+			///Add random person R to cluster i
+			clusters[i].currentMembers.add(R);
+		}
+
+		/*
+		///Dim is amount of people, go through all the people /// moet volgens mij enkel k punten uitzoeken ipv alles verdelen
 		for(int i = 0; i < dim; i++){
 			///Get random number between 0 and k.
 			Random r = new Random();
 			int R = r.nextInt(k-0);
 			///assign them to cluster R
-			///clusters[R] = ///add person i
+			clusters[R].currentMembers.add(i); ///add person i to cluster R
 		}
+		*/
 
 
 		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
