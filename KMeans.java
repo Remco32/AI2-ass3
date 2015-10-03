@@ -67,7 +67,6 @@ public class KMeans extends ClusteringAlgorithm
 			///Add random person R to cluster i
 			clusters[i].currentMembers.add(R);
 		}
-
 		/*
 		///Dim is amount of people, go through all the people /// moet volgens mij enkel k punten uitzoeken ipv alles verdelen
 		for(int i = 0; i < dim; i++){
@@ -79,8 +78,14 @@ public class KMeans extends ClusteringAlgorithm
 		}
 		*/
 
-
 		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
+		///Go through all the points
+
+		///Calculate distances to each initial point of each cluster.
+
+		///Add point to correct cluster
+
+
 		// Step 3: recalculate cluster centers
 		// Step 4: repeat until clustermembership stabilizes
 		return false;
