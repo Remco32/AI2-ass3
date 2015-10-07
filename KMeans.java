@@ -7,13 +7,13 @@ public class KMeans extends ClusteringAlgorithm
 
 	// Dimensionality of the vectors.
 	private int dim;
-	
+
 	// Threshold above which the corresponding html is prefetched
 	private double prefetchThreshold;
-	
+
 	// Array of k clusters, class cluster is used for easy bookkeeping
 	private Cluster[] clusters;
-	
+
 	// This class represents the clusters, it contains the prototype (the mean of all it's members)
 	// and memberlists with the ID's (which are Integer objects) of the datapoints that are member of that cluster.
 	// You also want to remember the previous members so you can check if the clusters are stable.
@@ -23,7 +23,7 @@ public class KMeans extends ClusteringAlgorithm
 
 		Set<Integer> currentMembers;
 		Set<Integer> previousMembers;
-		  
+
 		public Cluster()
 		{
 			currentMembers = new HashSet<Integer>();
@@ -38,15 +38,15 @@ public class KMeans extends ClusteringAlgorithm
 	// Results of test()
 	private double hitrate;
 	private double accuracy;
-	
+
 	public KMeans(int k, Vector<float[]> trainData, Vector<float[]> testData, int dim)
 	{
 		this.k = k;
 		this.trainData = trainData;
-		this.testData = testData; 
+		this.testData = testData;
 		this.dim = dim;
 		prefetchThreshold = 0.5;
-		
+
 		// Here k new cluster are initialized
 		clusters = new Cluster[k];
 		for (int ic = 0; ic < k; ic++)
@@ -56,7 +56,7 @@ public class KMeans extends ClusteringAlgorithm
 
 	public boolean train()
 	{
-	 	//implement k-means algorithm here:
+		//implement k-means algorithm here:
 		// Step 1: Select an initial random partioning with k clusters
 
 		///Select k initial points to become center of the cluster.
@@ -67,34 +67,27 @@ public class KMeans extends ClusteringAlgorithm
 			///Add random person R to cluster i
 			clusters[i].currentMembers.add(R);
 		}
-		/*
-		///Dim is amount of people, go through all the people /// moet volgens mij enkel k punten uitzoeken ipv alles verdelen
-		for(int i = 0; i < dim; i++){
-			///Get random number between 0 and k.
-			Random r = new Random();
-			int R = r.nextInt(k-0);
-			///assign them to cluster R
-			clusters[R].currentMembers.add(i); ///add person i to cluster R
-		}
-		*/
 
 		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
 		///Go through all the points. i is current person.
 		for(int i = 0; i < dim; i++){
 			int closestCenter = -1;
+			int shortestDistance = -1;
 			///Calculate distances to each initial point of each cluster. There are k clusters. j is current cluster.
 			for(int j = 0; j < k; j++){
-				int distance = -1;
-				///Calculate distance ///TODO figure out how to
-				/// if (newDistance < distance){
+				///Calculate distance ///TODO Add Euclidian distance using formula from the assignment.
+				///clusters[j].prototype is the prototype
+				for (int h = 0; h < 200; h++){ ///Vector is 200 wide
+					System.out.println("trainData.get(j) =" + trainData.get(j)[h]);
+				}
+				System.out.println("clusters[j].prototype =" + clusters[j].prototype);
+				///trainData.get(i);
+				/// if (newDistance < shortestDistance){
 				///		closestCenter = j; }
-
-		///Calculate distances to each initial point of each cluster.
-
 			}
 			///In case something went wrong.
 			if (closestCenter == -1){
-				System.out.println("\nWARNING! Something went wrong with assigning to clusters: closestCenter == -1");
+				System.out.println("\nWARNING! Something went wrong with assigning to clusters: closestCenter == -1\n");
 			}
 
 			///Add point to correct cluster
@@ -105,7 +98,6 @@ public class KMeans extends ClusteringAlgorithm
 
 
 		// Step 3: recalculate cluster centers
-         // calculate the mean of the clusters and put as cluster center. 
 		// Step 4: repeat until clustermembership stabilizes
 		return false;
 	}
@@ -132,23 +124,23 @@ public class KMeans extends ClusteringAlgorithm
 		System.out.println("Accuracy: " + this.accuracy);
 		System.out.println("Hitrate+Accuracy=" + (this.hitrate + this.accuracy));
 	}
-	
+
 	public void showMembers()
 	{
 		for (int i = 0; i < k; i++)
 			System.out.println("\nMembers cluster["+i+"] :" + clusters[i].currentMembers);
 	}
-	
+
 	public void showPrototypes()
 	{
 		for (int ic = 0; ic < k; ic++) {
 			System.out.print("\nPrototype cluster["+ic+"] :");
-			
+
 			for (int ip = 0; ip < dim; ip++)
 				System.out.print(clusters[ic].prototype[ip] + " ");
-			
+
 			System.out.println();
-		 }
+		}
 	}
 
 	// With this function you can set the prefetch threshold.
