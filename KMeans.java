@@ -64,14 +64,20 @@ public class KMeans extends ClusteringAlgorithm
 		for(int i = 0; i < k; i++ ){
 			///Get random number between 0 and dim.
 			Random r = new Random();
-			int R = r.nextInt(dim-0);
+			int R = r.nextInt(dim);
 			///Add random person R to cluster i
 			clusters[i].currentMembers.add(R);
 		}
 
 		/// Step 1.5 Calculate the prototypes of each cluster
-		for (int i = 0; i < k; i++){ /// go through all clusters
+		for (int i = 0; i < k; i++) { /// go through all clusters
 			clusters[i].prototype = calculatePrototype(clusters[i]);
+
+			///DEBUG
+			System.out.println("\nOur prototype for cluster[" + i + "] is:");
+			for (int j = 0; j < 200; j++) {
+				System.out.printf(" " + clusters[i].prototype[j]);
+			}
 		}
 
 		/*
@@ -135,13 +141,12 @@ public class KMeans extends ClusteringAlgorithm
 			int mean = 0; /// initialize to 0 so we can reuse it
 
 			for (int i = 0; i < size; i++) { /// and go through all of the members of the cluster
-				///mean = ///Member i of the cluster on vector location j ///TODO figure this out
+				///mean =  mean + ///Member i of the cluster on vector location j ///TODO figure this out
 			}
 			mean = mean/size; /// Calculate the actual mean
 			prototype[j] = mean; /// add it to our prototype
 		}
 		return prototype;
-
 	}
 
 	// The following members are called by RunClustering, in order to present information to the user
