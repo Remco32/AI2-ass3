@@ -71,7 +71,8 @@ public class Kohonen extends ClusteringAlgorithm
 		
 		//go through all clustercenter and calculate the euclidean distance and the closest cluster center as BMU 
 		
-		return BMU;
+		//return BMU;
+		return 0; /// Set to 0 so the code can compile
 	}
 	
 	public boolean train()

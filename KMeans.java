@@ -30,6 +30,7 @@ public class KMeans extends ClusteringAlgorithm
 			previousMembers = new HashSet<Integer>();
 		}
 	}
+
 	// These vectors contains the feature vectors you need; the feature vectors are float arrays.
 	// Remember that you have to cast them first, since vectors return objects.
 	private Vector<float[]> trainData;
@@ -68,6 +69,12 @@ public class KMeans extends ClusteringAlgorithm
 			clusters[i].currentMembers.add(R);
 		}
 
+		/// Step 1.5 Calculate the prototypes of each cluster
+		for (int i = 0; i < k; i++){ /// go through all clusters
+			clusters[i].prototype = calculatePrototype(clusters[i]);
+		}
+
+		/*
 		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
 		///Go through all the points. i is current person.
 		for(int i = 0; i < dim; i++){
@@ -93,7 +100,7 @@ public class KMeans extends ClusteringAlgorithm
 			///Add point to correct cluster
 			clusters[closestCenter].currentMembers.add(i);
 		}
-
+		*/
 
 
 
@@ -115,6 +122,27 @@ public class KMeans extends ClusteringAlgorithm
 		return true;
 	}
 
+	public float[] calculatePrototype(Cluster cluster){
+		float[] prototype = new float[200]; ///There are 200 websites saved. So each vector has length 200
+
+		///Get amount of members in the cluster
+		int size = cluster.currentMembers.size();
+		///System.out.println("size of this cluster / amount of members=" + size);
+
+		///Calculate the mean of all members of the cluster at location float[i]
+		for(int j = 0; j < 200; j++) { /// go through all 200 elements that each vector contains
+
+			int mean = 0; /// initialize to 0 so we can reuse it
+
+			for (int i = 0; i < size; i++) { /// and go through all of the members of the cluster
+				///mean = ///Member i of the cluster on vector location j ///TODO figure this out
+			}
+			mean = mean/size; /// Calculate the actual mean
+			prototype[j] = mean; /// add it to our prototype
+		}
+		return prototype;
+
+	}
 
 	// The following members are called by RunClustering, in order to present information to the user
 	public void showTest()
