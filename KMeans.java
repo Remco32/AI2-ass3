@@ -85,7 +85,6 @@ public class KMeans extends ClusteringAlgorithm
 		//go through train data
 		Iterator it = trainData.iterator();
          while(it.hasNext()){
-        	 mean = it.next();
         	 
         	 //get mean from it 
         	 // calculate distance to each cluster point
