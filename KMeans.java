@@ -89,6 +89,7 @@ public class KMeans extends ClusteringAlgorithm
 				/// if (newDistance < distance){
 				///		closestCenter = j; }
 
+		///Calculate distances to each initial point of each cluster.
 
 			}
 			///In case something went wrong.
@@ -104,6 +105,7 @@ public class KMeans extends ClusteringAlgorithm
 
 
 		// Step 3: recalculate cluster centers
+         // calculate the mean of the clusters and put as cluster center. 
 		// Step 4: repeat until clustermembership stabilizes
 		return false;
 	}

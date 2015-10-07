@@ -51,27 +51,64 @@ public class Kohonen extends ClusteringAlgorithm
 		this.dim = dim;       
 		
 		Random rnd = new Random();
+		
 
-		// Here n*n new cluster are initialized
+
+		// Here n*n new cluster are initialized and the cluster centers are initialized as random;
 		clusters = new Cluster[n][n];
 		for (int i = 0; i < n; i++)  {
 			for (int i2 = 0; i2 < n; i2++) {
 				clusters[i][i2] = new Cluster();
 				clusters[i][i2].prototype = new float[dim];
+				int R = rnd.nextInt(dim-0);
+				clusters[i][i2].currentMembers.add(R);
 			}
 		}
 	}
 
+	public Integer calcBMU(Object element){
+		Integer BMU;
+		
+		//go through all clustercenter and calculate the euclidean distance and the closest cluster center as BMU 
+		
+		return BMU;
+	}
 	
 	public boolean train()
 	{
-		// Step 1: initialize map with random vectors (A good place to do this, is in the initialisation of the clusters)
-		// Repeat 'epochs' times:
-			// Step 2: Calculate the squareSize and the learningRate, these decrease lineary with the number of epochs.
-			// Step 3: Every input vector is presented to the map (always in the same order)
-			// For each vector its Best Matching Unit is found, and :
-				// Step 4: All nodes within the neighbourhood of the BMU are changed, you don't have to use distance relative learning.
-		// Since training kohonen maps can take quite a while, presenting the user with a progress bar would be nice
+ 
+		for(int k =0; k<epochs; k++){
+			//calculate new neighborehoodsize and learning rate
+		    float rad = (n/2) * ( 1 - (k/epochs));
+		    double learnr= initialLearningRate * (1 - (k/epochs));
+		    
+		    //interate through traindata vectors
+			Iterator it = trainData.iterator();
+            while(it.hasNext()){
+            	Object element = it.next();
+            	Integer BMU = calcBMU(element); //where the fuck do i save the BMU
+            	//changes the current members within that BMU to the new formula 
+            	//go through clusters 
+            	for (int i = 0; i < n; i++)  {
+        			for (int i2 = 0; i2 < n; i2++) {
+        				//find if value is in neighborehood 
+        				for (Integer value : clusters[i][i2].currentMembers) {
+        					//if value is between BMU +- rad 
+        					//if () {
+        				    	//change that value according to the formula pnew = (1-learnr) * pold + learr * X;
+        				      // value = (1- learnr)* value + learnr * element; 
+        				        
+        				   // }
+        				}
+        			}
+        		}			    
+
+            }
+		
+		//print out progress 
+		System.out.println("progress: " + k + "/" + epochs);
+		}
+		
 		return true;
 	}
 	
