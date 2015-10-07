@@ -58,7 +58,7 @@ public class KMeans extends ClusteringAlgorithm
 	{
 	 	//implement k-means algorithm here:
 		// Step 1: Select an initial random partioning with k clusters
-
+         
 		///Select k initial points to become center of the cluster.
 		for(int i = 0; i < k; i++ ){
 			///Get random number between 0 and dim.
@@ -67,6 +67,8 @@ public class KMeans extends ClusteringAlgorithm
 			///Add random person R to cluster i
 			clusters[i].currentMembers.add(R);
 		}
+		
+		
 		/*
 		///Dim is amount of people, go through all the people /// moet volgens mij enkel k punten uitzoeken ipv alles verdelen
 		for(int i = 0; i < dim; i++){
@@ -77,16 +79,22 @@ public class KMeans extends ClusteringAlgorithm
 			clusters[R].currentMembers.add(i); ///add person i to cluster R
 		}
 		*/
+		
 
 		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
-		///Go through all the points
-
-		///Calculate distances to each initial point of each cluster.
-
-		///Add point to correct cluster
+		//go through train data
+		Iterator it = trainData.iterator();
+         while(it.hasNext()){
+        	 mean = it.next();
+        	 
+        	 //get mean from it 
+        	 // calculate distance to each cluster point
+        	 // add point to correct cluster by choosing the mininmal distance
+         }
 
 
 		// Step 3: recalculate cluster centers
+         // calculate the mean of the clusters and put as cluster center. 
 		// Step 4: repeat until clustermembership stabilizes
 		return false;
 	}
