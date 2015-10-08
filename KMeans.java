@@ -81,23 +81,31 @@ public class KMeans extends ClusteringAlgorithm
 			}
 		}
 
-		/*
+
 		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
 		///Go through all the points. i is current person.
-		for(int i = 0; i < dim; i++){
+		for(int i = 0; i < 70; i++){ ///TODO change to variable
 			int closestCenter = -1;
-			int shortestDistance = -1;
+			float shortestDistance = 9999;
+			float newDistance = 9999;
+
 			///Calculate distances to each initial point of each cluster. There are k clusters. j is current cluster.
 			for(int j = 0; j < k; j++){
 				///Calculate distance ///TODO Add Euclidian distance using formula from the assignment.
-				///clusters[j].prototype is the prototype
-				for (int h = 0; h < 200; h++){ ///Vector is 200 wide
-					System.out.println("trainData.get(j) =" + trainData.get(j)[h]);
+				for (int h = 0; h < dim; h++){ ///Vector is 200 wide  ///TODO debug this
+					///sum it
+					newDistance = trainData.get(j)[h] - clusters[j].prototype[h];
+					///square it
+					newDistance = newDistance*newDistance;
 				}
-				System.out.println("clusters[j].prototype =" + clusters[j].prototype);
-				///trainData.get(i);
-				/// if (newDistance < shortestDistance){
-				///		closestCenter = j; }
+				///get the square root
+				newDistance = (float)Math.sqrt(newDistance);
+				System.out.println("newDistance is berekend op "+ newDistance);
+
+				if (newDistance <= shortestDistance){
+					closestCenter = j;
+					System.out.println("Cluster "+closestCenter+" is now the closest with distance "+shortestDistance);
+				}
 			}
 			///In case something went wrong.
 			if (closestCenter == -1){
@@ -106,8 +114,8 @@ public class KMeans extends ClusteringAlgorithm
 
 			///Add point to correct cluster
 			clusters[closestCenter].currentMembers.add(i);
+			System.out.println("\n");
 		}
-		*/
 
 
 
