@@ -64,17 +64,17 @@ public class KMeans extends ClusteringAlgorithm
 		for(int i = 0; i < k; i++ ){
 			///Get random number between 0 and dim.
 			Random r = new Random();
-			int R = r.nextInt(dim);
+			int R = r.nextInt(70); ///TODO get this value from a variable
 			///Add random person R to cluster i
 			clusters[i].currentMembers.add(R);
-
 		}
 
 		/// Step 1.5 Calculate the prototypes of each cluster
 		for (int i = 0; i < k; i++) { /// go through all clusters
 			clusters[i].prototype = calculatePrototype(clusters[i]);
-
-			///DEBUG
+			}
+		///DEBUG
+		for (int i = 0; i < k; i++) { /// go through all clusters{
 			System.out.println("\nOur prototype for cluster[" + i + "] is:");
 			for (int j = 0; j < 200; j++) {
 				System.out.printf(" " + clusters[i].prototype[j]);
@@ -130,23 +130,20 @@ public class KMeans extends ClusteringAlgorithm
 	}
 
 	public float[] calculatePrototype(Cluster cluster){
-		float[] prototype = new float[200]; ///There are 200 websites saved. So each vector has length 200
+		float[] prototype = new float[dim];
 
 		///Get amount of members in the cluster
 		int size = cluster.currentMembers.size();
 
-		///System.out.println("Size of this cluster is " + size);
-		///System.out.println("Our cluster contains persons " + cluster.currentMembers);
-		///Create an array with all members of the cluster
+		System.out.println("Our cluster contains persons " + cluster.currentMembers);
 
-		///Calculate the mean of all members of the cluster at location float[i]
-		for(int j = 0; j < 200; j++) { /// go through all 200 elements that each vector contains
+		///Calculate the mean of all members of the cluster
+		for(int j = 0; j < dim; j++) { /// go through all 200 elements that each vector contains
 
 			float mean = 0; /// initialize to 0 so we can reuse it
 
-			for (int i = 0; i < size; i++) { /// and go through all of the members of the cluster
-				mean = mean + testData.elementAt(i)[j];
-				//System.out.println("Mean is now " + mean);
+			for (int n:cluster.currentMembers){ /// and go through all of the members of the cluster
+				mean = mean + trainData.elementAt(n)[j];
 			}
 			mean = mean/size; /// Calculate the actual mean
 			prototype[j] = mean; /// add it to our prototype
