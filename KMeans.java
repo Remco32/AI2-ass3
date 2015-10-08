@@ -67,6 +67,7 @@ public class KMeans extends ClusteringAlgorithm
 			int R = r.nextInt(dim);
 			///Add random person R to cluster i
 			clusters[i].currentMembers.add(R);
+
 		}
 
 		/// Step 1.5 Calculate the prototypes of each cluster
@@ -133,15 +134,19 @@ public class KMeans extends ClusteringAlgorithm
 
 		///Get amount of members in the cluster
 		int size = cluster.currentMembers.size();
-		///System.out.println("size of this cluster / amount of members=" + size);
+
+		///System.out.println("Size of this cluster is " + size);
+		///System.out.println("Our cluster contains persons " + cluster.currentMembers);
+		///Create an array with all members of the cluster
 
 		///Calculate the mean of all members of the cluster at location float[i]
 		for(int j = 0; j < 200; j++) { /// go through all 200 elements that each vector contains
 
-			int mean = 0; /// initialize to 0 so we can reuse it
+			float mean = 0; /// initialize to 0 so we can reuse it
 
 			for (int i = 0; i < size; i++) { /// and go through all of the members of the cluster
-				///mean =  mean + ///Member i of the cluster on vector location j ///TODO figure this out
+				mean = mean + testData.elementAt(i)[j];
+				//System.out.println("Mean is now " + mean);
 			}
 			mean = mean/size; /// Calculate the actual mean
 			prototype[j] = mean; /// add it to our prototype
