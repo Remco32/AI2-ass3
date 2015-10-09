@@ -73,16 +73,19 @@ public class KMeans extends ClusteringAlgorithm
 		for (int i = 0; i < k; i++) { /// go through all clusters
 			clusters[i].prototype = calculatePrototype(clusters[i]);
 			}
+
+
 		///DEBUG
 		for (int i = 0; i < k; i++) { /// go through all clusters{
 			System.out.println("\nOur prototype for cluster[" + i + "] is:");
 			for (int j = 0; j < 200; j++) {
 				System.out.printf(" " + clusters[i].prototype[j]);
 			}
+
 		}
 
 
-		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
+		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center ///TODO check if it works with >1 person in each cluster
 		///Go through all the people. i is current person.
 		for(int i = 0; i < 70; i++){ ///TODO change to variable
 			int closestCenter = -1;
@@ -91,18 +94,18 @@ public class KMeans extends ClusteringAlgorithm
 
 			///Calculate distances to each initial point of each cluster. There are k clusters. j is current cluster.
 			for(int j = 0; j < k; j++){
-				///Calculate distance ///TODO Add Euclidian distance using formula from the assignment.
-				for (int h = 0; h < dim; h++){  ///TODO debug this
+				///Calculate distance
+				for (int h = 0; h < dim; h++){
 					newDistance = newDistance + (float)Math.pow((trainData.get(i)[h] - clusters[j].prototype[h]),2);
 					///System.out.println("newDistance = "+ newDistance+" at website "+h);
 				}
 
-				System.out.println("newDistance is berekend op "+ newDistance+" voor cluster "+j);
+				///System.out.println("newDistance is berekend op "+ newDistance+" voor cluster "+j);
 
 				if (newDistance <= shortestDistance){
 					closestCenter = j;
 					shortestDistance = newDistance;
-					System.out.println("Cluster "+closestCenter+" is now the closest with distance "+shortestDistance);
+					///System.out.println("Cluster "+closestCenter+" is now the closest with distance "+shortestDistance);
 				}
 				newDistance = 0; /// clean the variable for the next cluster.
 			}
@@ -110,15 +113,47 @@ public class KMeans extends ClusteringAlgorithm
 			if (closestCenter == -1){
 				System.out.println("\nWARNING! Something went wrong with assigning to clusters: closestCenter == -1\n");
 			}
-
 			///Add point to correct cluster
 			clusters[closestCenter].currentMembers.add(i);
-			System.out.println("\n");
+			//System.out.println("\n");
 		}
 
 
-
 		// Step 3: recalculate cluster centers
+		///Compute new cluster centers as the centroid of the data vectors assigned to the considered cluster. == Take the average of the members and make it the new prototype
+
+		float meanWebsite = 0;
+		///Go through all clusters
+		for(int currentCluster = 0; currentCluster < k; currentCluster++) {
+			///Adjust the prototype for each of the websites. Dim is amount of websites
+			for (int currentWebsite = 0; currentWebsite < dim; currentWebsite++) {
+				///Take the mean of all members for the currentWebsite of the current cluster
+				for (int currentPerson : clusters[currentCluster].currentMembers) {
+					///sum all the values for this website
+					 meanWebsite += trainData.get(currentPerson)[currentWebsite];
+				}
+				///calculate the actual mean
+				meanWebsite /= clusters[currentCluster].currentMembers.size();
+				///adjust the prototype to new found mean
+				clusters[currentCluster].prototype[currentWebsite] = meanWebsite;
+				///reset the variable
+				meanWebsite = 0;
+			}
+		}
+
+		/*
+		///DEBUG
+		for (int i = 0; i < k; i++) { /// go through all clusters{
+			System.out.println("\nOur NEW prototype for cluster[" + i + "] is:");
+			for (int j = 0; j < 200; j++) {
+				System.out.printf(" " + clusters[i].prototype[j]);
+			}
+
+		}
+		*/
+
+		///Compute the mean by summing over all cluster members and then dividing by their number.
+
 		// Step 4: repeat until clustermembership stabilizes
 		return false;
 	}
@@ -142,7 +177,7 @@ public class KMeans extends ClusteringAlgorithm
 		///Get amount of members in the cluster
 		int size = cluster.currentMembers.size();
 
-		System.out.println("Our cluster contains persons " + cluster.currentMembers);
+		///System.out.println("Our cluster contains persons " + cluster.currentMembers);
 
 		///Calculate the mean of all members of the cluster
 		for(int j = 0; j < dim; j++) { /// go through all 200 elements that each vector contains
