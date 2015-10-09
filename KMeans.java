@@ -104,7 +104,7 @@ public class KMeans extends ClusteringAlgorithm
 					shortestDistance = newDistance;
 					System.out.println("Cluster "+closestCenter+" is now the closest with distance "+shortestDistance);
 				}
-				newDistance = 0; /// clean the variable for the next cluster
+				newDistance = 0; /// clean the variable for the next cluster.
 			}
 			///In case something went wrong.
 			if (closestCenter == -1){
