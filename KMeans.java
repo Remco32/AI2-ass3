@@ -55,106 +55,136 @@ public class KMeans extends ClusteringAlgorithm
 	}
 
 
-	public boolean train()
-	{
-		//implement k-means algorithm here:
-		// Step 1: Select an initial random partioning with k clusters
+	public boolean train() {
 
-		///Select k initial points to become center of the cluster.
-		for(int i = 0; i < k; i++ ){
-			///Get random number between 0 and dim.
-			Random r = new Random();
-			int R = r.nextInt(70); ///TODO get this value from a variable
-			///Add random person R to cluster i
-			clusters[i].currentMembers.add(R);
-		}
+		int iteration = 1;
 
-		/// Step 1.5 Calculate the prototypes of each cluster
-		for (int i = 0; i < k; i++) { /// go through all clusters
-			clusters[i].prototype = calculatePrototype(clusters[i]);
+		///Loop as long as the members are still changing ///TODO currentMembers and previousMembers seem to be always equal
+		while (clusters[0].currentMembers != clusters[0].previousMembers) { ///TODO 0 is a placeholder
+
+
+			///Update previousMembers for all clusters
+			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
+					clusters[currentCluster].previousMembers = clusters[currentCluster].currentMembers;
+					///clean currentmembers so it can start fresh
+					clusters[currentCluster].currentMembers.clear();
 			}
 
 
-		///DEBUG
-		for (int i = 0; i < k; i++) { /// go through all clusters{
-			System.out.println("\nOur prototype for cluster[" + i + "] is:");
-			for (int j = 0; j < 200; j++) {
-				System.out.printf(" " + clusters[i].prototype[j]);
+
+
+			//implement k-means algorithm here:
+			// Step 1: Select an initial random partioning with k clusters
+
+			///Select k initial points to become center of the cluster.
+			for (int i = 0; i < k; i++) {
+				///Get random number between 0 and dim.
+				Random r = new Random();
+				int R = r.nextInt(trainData.size());
+				///Add random person R to cluster i
+				clusters[i].currentMembers.add(R);
 			}
 
-		}
-
-
-		// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center ///TODO check if it works with >1 person in each cluster
-		///Go through all the people. i is current person.
-		for(int i = 0; i < 70; i++){ ///TODO change to variable
-			int closestCenter = -1;
-			float shortestDistance = 9999;
-			float newDistance = 0;
-
-			///Calculate distances to each initial point of each cluster. There are k clusters. j is current cluster.
-			for(int j = 0; j < k; j++){
-				///Calculate distance
-				for (int h = 0; h < dim; h++){
-					newDistance = newDistance + (float)Math.pow((trainData.get(i)[h] - clusters[j].prototype[h]),2);
-					///System.out.println("newDistance = "+ newDistance+" at website "+h);
+			///Calculate the prototypes of each cluster for the first time
+			if(iteration == 1) {
+				for (int i = 0; i < k; i++) { /// go through all clusters
+					clusters[i].prototype = calculatePrototype(clusters[i]);
 				}
+			}
 
-				///System.out.println("newDistance is berekend op "+ newDistance+" voor cluster "+j);
-
-				if (newDistance <= shortestDistance){
-					closestCenter = j;
-					shortestDistance = newDistance;
-					///System.out.println("Cluster "+closestCenter+" is now the closest with distance "+shortestDistance);
+/*
+			///DEBUG
+			for (int i = 0; i < k; i++) { /// go through all clusters{
+				System.out.println("\nOur prototype for cluster[" + i + "] is:");
+				for (int j = 0; j < 200; j++) {
+					System.out.printf(" " + clusters[i].prototype[j]);
 				}
-				newDistance = 0; /// clean the variable for the next cluster.
 			}
-			///In case something went wrong.
-			if (closestCenter == -1){
-				System.out.println("\nWARNING! Something went wrong with assigning to clusters: closestCenter == -1\n");
-			}
-			///Add point to correct cluster
-			clusters[closestCenter].currentMembers.add(i);
-			//System.out.println("\n");
-		}
+			*/
 
 
-		// Step 3: recalculate cluster centers
-		///Compute new cluster centers as the centroid of the data vectors assigned to the considered cluster. == Take the average of the members and make it the new prototype
 
-		float meanWebsite = 0;
-		///Go through all clusters
-		for(int currentCluster = 0; currentCluster < k; currentCluster++) {
-			///Adjust the prototype for each of the websites. Dim is amount of websites
-			for (int currentWebsite = 0; currentWebsite < dim; currentWebsite++) {
-				///Take the mean of all members for the currentWebsite of the current cluster
-				for (int currentPerson : clusters[currentCluster].currentMembers) {
-					///sum all the values for this website
-					 meanWebsite += trainData.get(currentPerson)[currentWebsite];
+			// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center ///TODO check if it works with >1 person in each cluster
+			///Go through all the people. i is current person.
+			for (int i = 0; i < trainData.size(); i++) {
+				int closestCenter = -1;
+				float shortestDistance = 9999;
+				float newDistance = 0;
+
+				///Calculate distances to each initial point of each cluster. There are k clusters. j is current cluster.
+				for (int j = 0; j < k; j++) {
+					///Calculate distance
+					for (int h = 0; h < dim; h++) {
+						newDistance = newDistance + (float) Math.pow((trainData.get(i)[h] - clusters[j].prototype[h]), 2);
+						///System.out.println("newDistance = "+ newDistance+" at website "+h);
+					}
+
+					///System.out.println("newDistance is berekend op "+ newDistance+" voor cluster "+j);
+
+					if (newDistance <= shortestDistance) {
+						closestCenter = j;
+						shortestDistance = newDistance;
+						///System.out.println("Cluster "+closestCenter+" is now the closest with distance "+shortestDistance);
+					}
+					newDistance = 0; /// clean the variable for the next cluster.
 				}
-				///calculate the actual mean
-				meanWebsite /= clusters[currentCluster].currentMembers.size();
-				///adjust the prototype to new found mean
-				clusters[currentCluster].prototype[currentWebsite] = meanWebsite;
-				///reset the variable
-				meanWebsite = 0;
-			}
-		}
-
-		/*
-		///DEBUG
-		for (int i = 0; i < k; i++) { /// go through all clusters{
-			System.out.println("\nOur NEW prototype for cluster[" + i + "] is:");
-			for (int j = 0; j < 200; j++) {
-				System.out.printf(" " + clusters[i].prototype[j]);
+				///In case something went wrong.
+				if (closestCenter == -1) {
+					System.out.println("\nWARNING! Something went wrong with assigning to clusters: closestCenter == -1\n");
+				}
+				///Add point to correct cluster
+				clusters[closestCenter].currentMembers.add(i);
+				//System.out.println("\n");
 			}
 
+
+			// Step 3: recalculate cluster centers
+			///Compute new cluster centers as the centroid of the data vectors assigned to the considered cluster. == Take the average of the members and make it the new prototype
+
+			float meanWebsite = 0;
+			///Go through all clusters
+			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
+				///Adjust the prototype for each of the websites. Dim is amount of websites
+				for (int currentWebsite = 0; currentWebsite < dim; currentWebsite++) {
+					///Take the mean of all members for the currentWebsite of the current cluster
+					for (int currentPerson : clusters[currentCluster].currentMembers) {
+						///sum all the values for this website
+						meanWebsite += trainData.get(currentPerson)[currentWebsite];
+					}
+					///calculate the actual mean
+					meanWebsite /= clusters[currentCluster].currentMembers.size();
+					///adjust the prototype to new found mean
+					clusters[currentCluster].prototype[currentWebsite] = meanWebsite;
+					///reset the variable
+					meanWebsite = 0;
+				}
+			}
+
+/*
+			///DEBUG
+			for (int i = 0; i < k; i++) { /// go through all clusters{
+				System.out.println("\nOur NEW prototype for cluster[" + i + "] is:");
+				for (int j = 0; j < 200; j++) {
+					System.out.printf(" " + clusters[i].prototype[j]);
+				}
+			}
+			*/
+
+
+
+			///DEBUG
+			System.out.printf("\n\nCurrentMembers of cluster 0 at iteration "+iteration+" are " + clusters[0].currentMembers);
+			System.out.printf("\nPreviousMembers of cluster 0 at iteration "+iteration+" are " + clusters[0].previousMembers);
+			System.out.printf("\nCurrentMembers of cluster 1 at iteration "+iteration+" are " + clusters[1].currentMembers);
+			System.out.printf("\nPreviousMembers of cluster 1 at iteration "+iteration+" are " + clusters[1].previousMembers);
+
+
+			///Compute the mean by summing over all cluster members and then dividing by their number.//TODO figure out if this step is redundant
+
+			// Step 4: repeat until clustermembership stabilizes
+
+			iteration++;
 		}
-		*/
-
-		///Compute the mean by summing over all cluster members and then dividing by their number.
-
-		// Step 4: repeat until clustermembership stabilizes
 		return false;
 	}
 
