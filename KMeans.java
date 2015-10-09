@@ -59,17 +59,6 @@ public class KMeans extends ClusteringAlgorithm
 
 		int iteration = 1;
 
-		///Loop as long as the members are still changing ///TODO currentMembers and previousMembers seem to be always equal
-		while (clusters[0].currentMembers != clusters[0].previousMembers) { ///TODO 0 is a placeholder
-
-
-			///Update previousMembers for all clusters
-			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
-					clusters[currentCluster].previousMembers = clusters[currentCluster].currentMembers;
-					///clean currentmembers so it can start fresh
-					clusters[currentCluster].currentMembers.clear();
-			}
-
 
 
 
@@ -86,11 +75,11 @@ public class KMeans extends ClusteringAlgorithm
 			}
 
 			///Calculate the prototypes of each cluster for the first time
-			if(iteration == 1) {
+
 				for (int i = 0; i < k; i++) { /// go through all clusters
 					clusters[i].prototype = calculatePrototype(clusters[i]);
 				}
-			}
+
 
 /*
 			///DEBUG
@@ -102,6 +91,17 @@ public class KMeans extends ClusteringAlgorithm
 			}
 			*/
 
+		///Loop as long as the members are still changing ///TODO currentMembers and previousMembers seem to be always equal
+		while (clusters[0].currentMembers != clusters[0].previousMembers) { ///TODO 0 is a placeholder
+
+
+			///Update previousMembers for all clusters
+
+			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
+				clusters[currentCluster].previousMembers = clusters[currentCluster].currentMembers;
+				///clean currentMembers so it can start fresh
+				clusters[currentCluster].currentMembers.clear();
+			}
 
 
 			// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center ///TODO check if it works with >1 person in each cluster
@@ -171,12 +171,11 @@ public class KMeans extends ClusteringAlgorithm
 			*/
 
 
-
 			///DEBUG
-			System.out.printf("\n\nCurrentMembers of cluster 0 at iteration "+iteration+" are " + clusters[0].currentMembers);
-			System.out.printf("\nPreviousMembers of cluster 0 at iteration "+iteration+" are " + clusters[0].previousMembers);
-			System.out.printf("\nCurrentMembers of cluster 1 at iteration "+iteration+" are " + clusters[1].currentMembers);
-			System.out.printf("\nPreviousMembers of cluster 1 at iteration "+iteration+" are " + clusters[1].previousMembers);
+			System.out.printf("\n\nCurrentMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].currentMembers);
+			System.out.printf("\nPreviousMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].previousMembers);
+			System.out.printf("\nCurrentMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].currentMembers);
+			System.out.printf("\nPreviousMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].previousMembers);
 
 
 			///Compute the mean by summing over all cluster members and then dividing by their number.//TODO figure out if this step is redundant
@@ -201,7 +200,7 @@ public class KMeans extends ClusteringAlgorithm
 		return true;
 	}
 
-	public float[] calculatePrototype(Cluster cluster){
+	public float[] calculatePrototype(Cluster cluster) {
 		float[] prototype = new float[dim];
 
 		///Get amount of members in the cluster
@@ -210,14 +209,14 @@ public class KMeans extends ClusteringAlgorithm
 		///System.out.println("Our cluster contains persons " + cluster.currentMembers);
 
 		///Calculate the mean of all members of the cluster
-		for(int j = 0; j < dim; j++) { /// go through all 200 elements that each vector contains
+		for (int j = 0; j < dim; j++) { /// go through all 200 elements that each vector contains
 
 			float mean = 0; /// initialize to 0 so we can reuse it
 
-			for (int n:cluster.currentMembers){ /// and go through all of the members of the cluster
+			for (int n : cluster.currentMembers) { /// and go through all of the members of the cluster
 				mean = mean + trainData.elementAt(n)[j];
 			}
-			mean = mean/size; /// Calculate the actual mean
+			mean = mean / size; /// Calculate the actual mean
 			prototype[j] = mean; /// add it to our prototype
 		}
 		return prototype;
