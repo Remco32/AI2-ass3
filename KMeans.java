@@ -91,20 +91,37 @@ public class KMeans extends ClusteringAlgorithm
 			}
 			*/
 
-		///Loop as long as the members are still changing ///TODO currentMembers and previousMembers seem to be always equal
-		while (clusters[0].currentMembers != clusters[0].previousMembers) { ///TODO 0 is a placeholder
+		System.out.printf("\n\nCurrentMembers of cluster 0 before loop are " + clusters[0].currentMembers);
+		System.out.printf("\nPreviousMembers of cluster 0 before loop are " + clusters[0].previousMembers);
+
+		///Loop as long as the members are still changing
+		while (!clusters[0].previousMembers.equals(clusters[0].currentMembers) ) { ///TODO 0 is a placeholder
 
 
-			///Update previousMembers for all clusters
 
+			/*
 			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
 				clusters[currentCluster].previousMembers = clusters[currentCluster].currentMembers;
 				///clean currentMembers so it can start fresh
 				clusters[currentCluster].currentMembers.clear();
 			}
+			*/
+			///Update previousMembers for all clusters
+			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
 
+				///for (int n : clusters[currentCluster].previousMembers) { /// and go through all of the members of the cluster
 
-			// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center ///TODO check if it works with >1 person in each cluster
+					///Clean up old members
+				clusters[currentCluster].previousMembers.clear();
+
+				///Add all elements from current members to previousMembers
+					clusters[currentCluster].previousMembers.addAll(clusters[currentCluster].currentMembers);
+					///clean currentMembers so it can start fresh
+					clusters[currentCluster].currentMembers.clear();
+				///}
+			}
+
+			// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
 			///Go through all the people. i is current person.
 			for (int i = 0; i < trainData.size(); i++) {
 				int closestCenter = -1;
@@ -174,8 +191,8 @@ public class KMeans extends ClusteringAlgorithm
 			///DEBUG
 			System.out.printf("\n\nCurrentMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].currentMembers);
 			System.out.printf("\nPreviousMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].previousMembers);
-			System.out.printf("\nCurrentMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].currentMembers);
-			System.out.printf("\nPreviousMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].previousMembers);
+			///System.out.printf("\nCurrentMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].currentMembers);
+			///System.out.printf("\nPreviousMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].previousMembers);
 
 
 			///Compute the mean by summing over all cluster members and then dividing by their number.//TODO figure out if this step is redundant
