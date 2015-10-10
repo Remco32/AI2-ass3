@@ -57,28 +57,23 @@ public class KMeans extends ClusteringAlgorithm
 
 	public boolean train() {
 
-		int iteration = 1;
+		///int iteration = 1;
+		// Step 1: Select an initial random partioning with k clusters
 
+		///Select k initial points to become center of the cluster.
+		for (int i = 0; i < k; i++) {
+			///Get random number between 0 and dim.
+			Random r = new Random();
+			int R = r.nextInt(trainData.size());
+			///Add random person R to cluster i
+			clusters[i].currentMembers.add(R);
+		}
 
+		///Calculate the prototypes of each cluster for the first time
 
-
-			//implement k-means algorithm here:
-			// Step 1: Select an initial random partioning with k clusters
-
-			///Select k initial points to become center of the cluster.
-			for (int i = 0; i < k; i++) {
-				///Get random number between 0 and dim.
-				Random r = new Random();
-				int R = r.nextInt(trainData.size());
-				///Add random person R to cluster i
-				clusters[i].currentMembers.add(R);
-			}
-
-			///Calculate the prototypes of each cluster for the first time
-
-				for (int i = 0; i < k; i++) { /// go through all clusters
-					clusters[i].prototype = calculatePrototype(clusters[i]);
-				}
+		for (int i = 0; i < k; i++) { /// go through all clusters
+			clusters[i].prototype = calculatePrototype(clusters[i]);
+		}
 
 
 /*
@@ -89,36 +84,23 @@ public class KMeans extends ClusteringAlgorithm
 					System.out.printf(" " + clusters[i].prototype[j]);
 				}
 			}
-			*/
 
 		System.out.printf("\n\nCurrentMembers of cluster 0 before loop are " + clusters[0].currentMembers);
 		System.out.printf("\nPreviousMembers of cluster 0 before loop are " + clusters[0].previousMembers);
+		*/
 
+		// Step 4: repeat until clustermembership stabilizes
 		///Loop as long as the members are still changing
-		while (!clusters[0].previousMembers.equals(clusters[0].currentMembers) ) { ///TODO 0 is a placeholder
-
-
-
-			/*
-			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
-				clusters[currentCluster].previousMembers = clusters[currentCluster].currentMembers;
-				///clean currentMembers so it can start fresh
-				clusters[currentCluster].currentMembers.clear();
-			}
-			*/
+		while (!clusters[0].previousMembers.equals(clusters[0].currentMembers)) { ///TODO 0 is a placeholder
 			///Update previousMembers for all clusters
 			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
-
-				///for (int n : clusters[currentCluster].previousMembers) { /// and go through all of the members of the cluster
-
-					///Clean up old members
+				///Clean up old members
 				clusters[currentCluster].previousMembers.clear();
-
 				///Add all elements from current members to previousMembers
-					clusters[currentCluster].previousMembers.addAll(clusters[currentCluster].currentMembers);
-					///clean currentMembers so it can start fresh
-					clusters[currentCluster].currentMembers.clear();
-				///}
+				clusters[currentCluster].previousMembers.addAll(clusters[currentCluster].currentMembers);
+				///clean currentMembers so it can start fresh
+				clusters[currentCluster].currentMembers.clear();
+
 			}
 
 			// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
@@ -133,15 +115,11 @@ public class KMeans extends ClusteringAlgorithm
 					///Calculate distance
 					for (int h = 0; h < dim; h++) {
 						newDistance = newDistance + (float) Math.pow((trainData.get(i)[h] - clusters[j].prototype[h]), 2);
-						///System.out.println("newDistance = "+ newDistance+" at website "+h);
 					}
-
-					///System.out.println("newDistance is berekend op "+ newDistance+" voor cluster "+j);
-
+					///Check if we found a shorter distance
 					if (newDistance <= shortestDistance) {
 						closestCenter = j;
 						shortestDistance = newDistance;
-						///System.out.println("Cluster "+closestCenter+" is now the closest with distance "+shortestDistance);
 					}
 					newDistance = 0; /// clean the variable for the next cluster.
 				}
@@ -151,13 +129,10 @@ public class KMeans extends ClusteringAlgorithm
 				}
 				///Add point to correct cluster
 				clusters[closestCenter].currentMembers.add(i);
-				//System.out.println("\n");
 			}
-
 
 			// Step 3: recalculate cluster centers
 			///Compute new cluster centers as the centroid of the data vectors assigned to the considered cluster. == Take the average of the members and make it the new prototype
-
 			float meanWebsite = 0;
 			///Go through all clusters
 			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
@@ -177,29 +152,15 @@ public class KMeans extends ClusteringAlgorithm
 				}
 			}
 
-/*
 			///DEBUG
-			for (int i = 0; i < k; i++) { /// go through all clusters{
-				System.out.println("\nOur NEW prototype for cluster[" + i + "] is:");
-				for (int j = 0; j < 200; j++) {
-					System.out.printf(" " + clusters[i].prototype[j]);
-				}
-			}
-			*/
-
-
-			///DEBUG
-			System.out.printf("\n\nCurrentMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].currentMembers);
-			System.out.printf("\nPreviousMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].previousMembers);
+			///System.out.printf("\n\nCurrentMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].currentMembers);
+			///System.out.printf("\nPreviousMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].previousMembers);
 			///System.out.printf("\nCurrentMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].currentMembers);
 			///System.out.printf("\nPreviousMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].previousMembers);
 
 
 			///Compute the mean by summing over all cluster members and then dividing by their number.//TODO figure out if this step is redundant
-
-			// Step 4: repeat until clustermembership stabilizes
-
-			iteration++;
+			///iteration++;
 		}
 		return false;
 	}
