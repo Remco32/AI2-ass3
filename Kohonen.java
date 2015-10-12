@@ -88,7 +88,7 @@ public class Kohonen extends ClusteringAlgorithm
     				float shortestDistance = 9999;
     				float newDistance = 0;
 
-    				///Calculate distances to each initial point of each cluster. There are n*n clusters. j is current cluster.
+    				///Calculate distances to each initial point of each cluster. There are n*n clusters. 
     				for (int j = 0; j < n; j++) {
     					for (int j2 = 0; j2 < n; j2++) {
     					///Calculate distance
