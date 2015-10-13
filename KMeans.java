@@ -56,29 +56,35 @@ public class KMeans extends ClusteringAlgorithm
 
 
 	public boolean train() {
+		//TODO remove all debug code
+		///int iteration = 1;
+		// Step 1: Select an initial random partioning with k clusters
 
-		int iteration = 1;
+		/*
+		///Select k initial points to become center of the cluster.
+		for (int i = 0; i < k; i++) {
+			///Get random number between 0 and dim.
+			Random r = new Random();
+			int R = r.nextInt(trainData.size());
+			///Add random person R to cluster i
+			clusters[i].currentMembers.add(R);
+		}
+		*/
 
+		///Go through all people and add them to a random cluster
+		for (int i = 0; i < trainData.size(); i++) {
+			///Get random number between 0 and dim.
+			Random r = new Random();
+			int R = r.nextInt(k);
+			///Add person i to cluster R
+			clusters[R].currentMembers.add(i);
+		}
 
+		///Calculate the prototypes of each cluster for the first time
 
-
-			//implement k-means algorithm here:
-			// Step 1: Select an initial random partioning with k clusters
-
-			///Select k initial points to become center of the cluster.
-			for (int i = 0; i < k; i++) {
-				///Get random number between 0 and dim.
-				Random r = new Random();
-				int R = r.nextInt(trainData.size());
-				///Add random person R to cluster i
-				clusters[i].currentMembers.add(R);
-			}
-
-			///Calculate the prototypes of each cluster for the first time
-
-				for (int i = 0; i < k; i++) { /// go through all clusters
-					clusters[i].prototype = calculatePrototype(clusters[i]);
-				}
+		for (int i = 0; i < k; i++) { /// go through all clusters
+			clusters[i].prototype = calculatePrototype(clusters[i]);
+		}
 
 
 /*
@@ -89,22 +95,25 @@ public class KMeans extends ClusteringAlgorithm
 					System.out.printf(" " + clusters[i].prototype[j]);
 				}
 			}
-			*/
+		System.out.printf("\n\nCurrentMembers of cluster 0 before loop are " + clusters[0].currentMembers);
+		System.out.printf("\nPreviousMembers of cluster 0 before loop are " + clusters[0].previousMembers);
+		*/
 
-		///Loop as long as the members are still changing ///TODO currentMembers and previousMembers seem to be always equal
-		while (clusters[0].currentMembers != clusters[0].previousMembers) { ///TODO 0 is a placeholder
-
-
+		// Step 4: repeat until clustermembership stabilizes
+		///Loop as long as the members are still changing
+		while (!clusters[0].previousMembers.equals(clusters[0].currentMembers)) { ///TODO 0 is a placeholder
 			///Update previousMembers for all clusters
-
 			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
-				clusters[currentCluster].previousMembers = clusters[currentCluster].currentMembers;
+				///Clean up old members
+				clusters[currentCluster].previousMembers.clear();
+				///Add all elements from current members to previousMembers
+				clusters[currentCluster].previousMembers.addAll(clusters[currentCluster].currentMembers);
 				///clean currentMembers so it can start fresh
 				clusters[currentCluster].currentMembers.clear();
+
 			}
 
-
-			// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center ///TODO check if it works with >1 person in each cluster
+			// Step 2: Generate a new partition by assigning each datapoint to its closest cluster center
 			///Go through all the people. i is current person.
 			for (int i = 0; i < trainData.size(); i++) {
 				int closestCenter = -1;
@@ -116,15 +125,11 @@ public class KMeans extends ClusteringAlgorithm
 					///Calculate distance
 					for (int h = 0; h < dim; h++) {
 						newDistance = newDistance + (float) Math.pow((trainData.get(i)[h] - clusters[j].prototype[h]), 2);
-						///System.out.println("newDistance = "+ newDistance+" at website "+h);
 					}
-
-					///System.out.println("newDistance is berekend op "+ newDistance+" voor cluster "+j);
-
+					///Check if we found a shorter distance
 					if (newDistance <= shortestDistance) {
 						closestCenter = j;
 						shortestDistance = newDistance;
-						///System.out.println("Cluster "+closestCenter+" is now the closest with distance "+shortestDistance);
 					}
 					newDistance = 0; /// clean the variable for the next cluster.
 				}
@@ -134,13 +139,10 @@ public class KMeans extends ClusteringAlgorithm
 				}
 				///Add point to correct cluster
 				clusters[closestCenter].currentMembers.add(i);
-				//System.out.println("\n");
 			}
-
 
 			// Step 3: recalculate cluster centers
 			///Compute new cluster centers as the centroid of the data vectors assigned to the considered cluster. == Take the average of the members and make it the new prototype
-
 			float meanWebsite = 0;
 			///Go through all clusters
 			for (int currentCluster = 0; currentCluster < k; currentCluster++) {
@@ -160,29 +162,14 @@ public class KMeans extends ClusteringAlgorithm
 				}
 			}
 
-/*
 			///DEBUG
-			for (int i = 0; i < k; i++) { /// go through all clusters{
-				System.out.println("\nOur NEW prototype for cluster[" + i + "] is:");
-				for (int j = 0; j < 200; j++) {
-					System.out.printf(" " + clusters[i].prototype[j]);
-				}
-			}
-			*/
+			///System.out.printf("\n\nCurrentMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].currentMembers);
+			///System.out.printf("\nPreviousMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].previousMembers);
+			///System.out.printf("\nCurrentMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].currentMembers);
+			///System.out.printf("\nPreviousMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].previousMembers);
 
 
-			///DEBUG
-			System.out.printf("\n\nCurrentMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].currentMembers);
-			System.out.printf("\nPreviousMembers of cluster 0 at iteration " + iteration + " are " + clusters[0].previousMembers);
-			System.out.printf("\nCurrentMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].currentMembers);
-			System.out.printf("\nPreviousMembers of cluster 1 at iteration " + iteration + " are " + clusters[1].previousMembers);
-
-
-			///Compute the mean by summing over all cluster members and then dividing by their number.//TODO figure out if this step is redundant
-
-			// Step 4: repeat until clustermembership stabilizes
-
-			iteration++;
+			///iteration++;
 		}
 		return false;
 	}
@@ -190,10 +177,65 @@ public class KMeans extends ClusteringAlgorithm
 	public boolean test()
 	{
 		// iterate along all clients. Assumption: the same clients are in the same order as in the testData
-		// for each client find the cluster of which it is a member
-		// get the actual testData (the vector) of this client
-		// iterate along all dimensions
-		// and count prefetched htmls
+
+		for (int clientNumber = 0; clientNumber < testData.size(); clientNumber++) {
+
+			int memberOfCluster = -1;
+			int correct = 0;
+			int incorrect = 0;
+			int falsePositive = 0;
+			int falseNegative = 0;
+			int prefetchRequest = 0;
+			int shouldBePrefetched = 0;
+			int prefetchedAmount = 0;
+
+
+			// for each client find the cluster of which it is a member
+			for (int currentCluster = 0; currentCluster < k; currentCluster++) { /// go through all clusters
+				if(clusters[currentCluster].currentMembers.contains(clientNumber)){
+					memberOfCluster = currentCluster;
+					break;
+				}
+			}
+			///In case something went wrong.
+			if (memberOfCluster == -1) {
+				System.out.println("\nWARNING! Something went wrong with finding membership clusters: memberOfCluster == -1\n");
+			}
+
+			// get the actual testData (the vector) of this client
+			///Get the amount of URLs that should have been prefetched
+			for(int i = 0; i < dim; i++){
+				shouldBePrefetched +=  testData.get(clientNumber)[i];
+			}
+			System.out.println("shouldBePrefetched=" + shouldBePrefetched);
+
+
+			// iterate along all dimensions
+			for(int currentPosition = 0; currentPosition < dim ;currentPosition++){
+				// and count prefetched htmls
+				///If prototype of the cluster is equal or higher than the threshold, it should prefetch
+				if(clusters[memberOfCluster].prototype[currentPosition] >= prefetchThreshold){
+					prefetchRequest++;
+					///check if it should have prefetched
+					if(testData.get(clientNumber)[currentPosition] == 1){
+						correct++;
+					}
+					else{
+						falsePositive++;
+					}
+				}
+			}
+
+			System.out.println("prefetchRequest=" + prefetchRequest);
+
+			hitrate += prefetchRequest/shouldBePrefetched; /// update hitrate
+			accuracy += prefetchRequest/prefetchRequest;
+
+			System.out.println("\n");
+		}
+
+		hitrate = hitrate/testData.size(); ///Normalize the value
+
 		// count number of hits
 		// count number of requests
 		// set the global variables hitrate and accuracy to their appropriate value
