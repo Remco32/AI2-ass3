@@ -67,6 +67,7 @@ public class Kohonen extends ClusteringAlgorithm
 				//cluster centers are initialized as random
 				clusters[i][i2].currentMembers.add(R);
 				clusters[i][i2].prototype = calculatePrototype(clusters[i][i2]);
+				clusters[i][i2].currentMembers.clear();
 			}
 		}
 	}
@@ -112,12 +113,17 @@ public class Kohonen extends ClusteringAlgorithm
     				if (closestCenter == -1) {
     					System.out.println("\nWARNING! Something went wrong with assigning to clusters: closestCenter == -1\n");
     				}
+    				
+    				if ( k == (epochs -1)){
+    					clusters[closestCenter][closestCenter2].currentMembers.add(i);
+    				}
+
     				///find all clusters in neighborehood and adjust prototype of them
     				for (int r = (closestCenter- rad); r < (closestCenter +rad); r++ ){
     					for (int s = (closestCenter2- rad); s < (closestCenter2 +rad); s++ ){
     				if((r != closestCenter && s!= closestCenter2) &&(r>=0 )&& (s>=0) && (r<n) && (s<n)){
     					for (int h = 0; h < dim; h++) {
-    				//clusters[r][s].prototype[h] = (float)((1- learnr) * clusters[r][s].prototype[h]) + (float)(learnr * trainData.get(i)[h]);
+    				clusters[r][s].prototype[h] = (float)((1- learnr) * clusters[r][s].prototype[h]) + (float)(learnr * trainData.get(i)[h]);
     		         		}
     				      }
     					}
