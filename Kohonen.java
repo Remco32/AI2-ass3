@@ -20,9 +20,10 @@ public class Kohonen extends ClusteringAlgorithm
 	// and a memberlist with the ID's (Integer objects) of the datapoints that are member of that cluster.  
 	private Cluster[][] clusters;
 
-	// Vector which contains the train/test data
+	// Vector which contains the train/test data and the clientsVector
 	private Vector<float[]> trainData;
 	private Vector<float[]> testData;
+
 	
 	// Results of test()
 	private double hitrate;
@@ -161,17 +162,72 @@ public class Kohonen extends ClusteringAlgorithm
 	}
 	
 	public boolean test()
+	
 	{
-		// iterate along all clients
-		// for each client find the cluster of which it is a member
-		// get the actual testData (the vector) of this client
-		// iterate along all dimensions
-		// and count prefetched htmls
-		// count number of hits
-		// count number of requests
-		// set the global variables hitrate and accuracy to their appropriate value
+		// iterate along all clients. Assumption: the same clients are in the same order as in the testData
+
+		for (int clientNumber = 0; clientNumber < testData.size(); clientNumber++) {
+
+			int memberOfCluster = -1;
+			int memberOfCluster2 = -1; 
+			int correct = 0;
+			int prefetchRequest = 0;
+			int shouldBePrefetched = 0;
+
+
+			// for each client find the cluster of which it is a member
+			for (int currentCluster = 0; currentCluster < n; currentCluster++) {
+				for (int currentCluster2 = 0; currentCluster2 <n ; currentCluster2++){/// go through all clusters
+				if(clusters[currentCluster][currentCluster2].currentMembers.contains(clientNumber)){
+					memberOfCluster = currentCluster;
+					memberOfCluster2 = currentCluster2; 
+					break;
+				}
+			  }
+			}		
+			///In case something went wrong.
+			if (memberOfCluster == -1) {
+				System.out.println("\nWARNING! Something went wrong with finding membership clusters: memberOfCluster == -1\n");
+			}
+
+			// get the actual testData (the vector) of this client
+			///Get the amount of URLs that should have been prefetched
+			for(int i = 0; i < dim; i++){
+				shouldBePrefetched +=  testData.get(clientNumber)[i];
+			}
+
+
+			// iterate along all dimensions
+			for(int currentPosition = 0; currentPosition < dim ;currentPosition++){
+				// and count prefetched htmls
+				///If prototype of the cluster is equal or higher than the threshold, it should prefetch
+				if(clusters[memberOfCluster][memberOfCluster2].prototype[currentPosition] >= prefetchThreshold){
+					prefetchRequest++;
+					///check if it should have prefetched
+					if(testData.get(clientNumber)[currentPosition] == 1){
+						correct++;
+					}
+
+				}
+			}
+
+            /// update hitrate
+            if (shouldBePrefetched != 0){
+			hitrate += (double)correct/shouldBePrefetched; 
+            }
+            
+            //update accuracy
+            if (prefetchRequest != 0){
+			accuracy += (double)correct/prefetchRequest;
+            }
+		}
+		 ///Normalize the values
+		hitrate = hitrate/testData.size();
+        accuracy = accuracy/testData.size();
+		
 		return true;
 	}
+
 
 
 	public void showTest()
@@ -209,5 +265,7 @@ public class Kohonen extends ClusteringAlgorithm
 	{
 		this.prefetchThreshold = prefetchThreshold;
 	}
+	
+
 }
 

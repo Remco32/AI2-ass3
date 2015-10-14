@@ -182,9 +182,6 @@ public class KMeans extends ClusteringAlgorithm
 
 			int memberOfCluster = -1;
 			int correct = 0;
-			int incorrect = 0;
-			int falsePositive = 0;
-			int falseNegative = 0;
 			int prefetchRequest = 0;
 			int shouldBePrefetched = 0;
 			int prefetchedAmount = 0;
@@ -207,8 +204,6 @@ public class KMeans extends ClusteringAlgorithm
 			for(int i = 0; i < dim; i++){
 				shouldBePrefetched +=  testData.get(clientNumber)[i];
 			}
-			System.out.println("shouldBePrefetched=" + shouldBePrefetched);
-
 
 			// iterate along all dimensions
 			for(int currentPosition = 0; currentPosition < dim ;currentPosition++){
@@ -220,25 +215,24 @@ public class KMeans extends ClusteringAlgorithm
 					if(testData.get(clientNumber)[currentPosition] == 1){
 						correct++;
 					}
-					else{
-						falsePositive++;
-					}
 				}
 			}
 
-			System.out.println("prefetchRequest=" + prefetchRequest);
+			 /// update hitrate
+            if (shouldBePrefetched != 0){
+			hitrate += (double)correct/shouldBePrefetched; 
+            }
+            
+            //update accuracy
+            if (prefetchRequest != 0){
+			accuracy += (double)correct/prefetchRequest;
+            }
 
-			hitrate += prefetchRequest/shouldBePrefetched; /// update hitrate
-			accuracy += prefetchRequest/prefetchRequest;
-
-			System.out.println("\n");
 		}
 
-		hitrate = hitrate/testData.size(); ///Normalize the value
-
-		// count number of hits
-		// count number of requests
-		// set the global variables hitrate and accuracy to their appropriate value
+		 ///Normalize the values
+		hitrate = hitrate/testData.size();
+        accuracy = accuracy/testData.size();
 		return true;
 	}
 
