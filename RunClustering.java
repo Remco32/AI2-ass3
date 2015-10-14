@@ -193,7 +193,7 @@ public class RunClustering
 		
 		// The kohonen model is now created
 		// java doesn't have a 'const' specifier, so for safety objects are passed by reference
-		ca = new Kohonen(n, epochs, new Vector<float[]>(trainData), new Vector<float[]>(testData), dim);
+		ca = new Kohonen(n, epochs, new Vector<float[]>(trainData), new Vector<float[]>(testData),  dim);
 	}
 	
 	public static boolean showResult()
