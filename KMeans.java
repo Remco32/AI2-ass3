@@ -178,6 +178,7 @@ public class KMeans extends ClusteringAlgorithm
 	{
 		// iterate along all clients. Assumption: the same clients are in the same order as in the testData
 
+
 		for (int clientNumber = 0; clientNumber < testData.size(); clientNumber++) {
 
 			int memberOfCluster = -1;
@@ -188,11 +189,13 @@ public class KMeans extends ClusteringAlgorithm
 			int prefetchRequest = 0;
 			int shouldBePrefetched = 0;
 			int prefetchedAmount = 0;
+			int beenPrefetched = 0;
+			int requested = 0;
 
 
 			// for each client find the cluster of which it is a member
 			for (int currentCluster = 0; currentCluster < k; currentCluster++) { /// go through all clusters
-				if(clusters[currentCluster].currentMembers.contains(clientNumber)){
+				if (clusters[currentCluster].currentMembers.contains(clientNumber)) {
 					memberOfCluster = currentCluster;
 					break;
 				}
@@ -203,40 +206,59 @@ public class KMeans extends ClusteringAlgorithm
 			}
 
 			// get the actual testData (the vector) of this client
-			///Get the amount of URLs that should have been prefetched
-			for(int i = 0; i < dim; i++){
-				shouldBePrefetched +=  testData.get(clientNumber)[i];
-			}
-			System.out.println("shouldBePrefetched=" + shouldBePrefetched);
 
+
+			///Get the amount of URLs that have been requested by the client
+			for (int i = 0; i < dim; i++) {
+				if (testData.get(clientNumber)[i] == 1) {
+					requested++;
+				}
+			}
 
 			// iterate along all dimensions
-			for(int currentPosition = 0; currentPosition < dim ;currentPosition++){
+			for (int currentPosition = 0; currentPosition < dim; currentPosition++) {
 				// and count prefetched htmls
 				///If prototype of the cluster is equal or higher than the threshold, it should prefetch
-				if(clusters[memberOfCluster].prototype[currentPosition] >= prefetchThreshold){
-					prefetchRequest++;
-					///check if it should have prefetched
-					if(testData.get(clientNumber)[currentPosition] == 1){
+				if (clusters[memberOfCluster].prototype[currentPosition] >= prefetchThreshold) {
+					beenPrefetched++;
+					///check if it SHOULD have prefetched
+					if (testData.get(clientNumber)[currentPosition] == 1) {
+						// count number of hits
 						correct++;
-					}
-					else{
+					} else {
 						falsePositive++;
 					}
 				}
 			}
 
-			System.out.println("prefetchRequest=" + prefetchRequest);
-
-			hitrate += prefetchRequest/shouldBePrefetched; /// update hitrate
-			accuracy += prefetchRequest/prefetchRequest;
-
+			System.out.println("requested = " + requested);
+			System.out.println("beenPrefetched = " + beenPrefetched);
+			System.out.println("correct = " + correct);
 			System.out.println("\n");
+
+			if (requested != 0) {
+				hitrate = (correct / requested) + hitrate;
+			}
+			if (prefetchRequest != 0) {
+				accuracy = (correct / beenPrefetched) + accuracy;
+			}
+			System.out.println("hitrate is now = " + hitrate);
+			System.out.println("accuracy is now = " + accuracy);
+
+
 		}
 
-		hitrate = hitrate/testData.size(); ///Normalize the value
+		//hitrate =  (shouldBePrefetched / prefetchRequest) / testData.size()); ///TODO why doesn't this update?
+		//accuracy = (correct / prefetchRequest) / testData.size();
+		hitrate = hitrate / testData.size();
+		accuracy = accuracy / testData.size();
+		System.out.println("hitrate = " + hitrate);
+		System.out.println("accuracy = " + accuracy);
+		System.out.println("testData.size() = " + testData.size());
 
-		// count number of hits
+
+
+
 		// count number of requests
 		// set the global variables hitrate and accuracy to their appropriate value
 		return true;
